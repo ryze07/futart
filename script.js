@@ -5,44 +5,26 @@ let newTab = null;
 
 startShareButton.addEventListener('click', async () => {
     try {
-        // Captura a tela
+        // Captura a tela inteira ou janela específica
         mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
 
-        // Abre uma nova aba (não uma janela pop-up)
-        newTab = window.open("about:blank", "_blank");  // Usa "_blank" para abrir uma nova aba no navegador
+        // Abre uma nova aba (página `display.html`)
+        newTab = window.open("display.html", "_blank");
 
-        // Verifica se a aba foi aberta corretamente
+        // Verifica se a nova aba foi aberta corretamente
         if (newTab) {
-            // Cria o conteúdo da nova aba sem usar document.write
-            const doc = newTab.document;
-            doc.title = "Screen Sharing";
-
-            // Estilos para o corpo da nova aba
-            doc.body.style.margin = '0';
-            doc.body.style.display = 'flex';
-            doc.body.style.justifyContent = 'center';
-            doc.body.style.alignItems = 'center';
-            doc.body.style.height = '100vh';
-            doc.body.style.backgroundColor = '#000';
-
-            // Cria o elemento de vídeo na nova aba
-            const videoElement = doc.createElement('video');
-            videoElement.style.width = '100%';
-            videoElement.style.height = '100%';
-            videoElement.autoplay = true;
-            videoElement.playsInline = true;
-
-            // Adiciona o vídeo à nova aba
-            doc.body.appendChild(videoElement);
-
-            // Injeta o stream de mídia no vídeo da nova aba
-            videoElement.srcObject = mediaStream;
+            // Quando a aba estiver carregada, envie o stream de vídeo
+            newTab.onload = () => {
+                // Usa uma URL de objeto de mídia para transferir o stream
+                const videoStreamURL = URL.createObjectURL(mediaStream);
+                newTab.postMessage({ type: 'stream', streamURL: videoStreamURL }, '*');
+            };
 
             // Atualiza os botões de controle
             startShareButton.disabled = true;
             stopShareButton.disabled = false;
         } else {
-            console.error("Não foi possível abrir uma nova aba. Verifique as configurações do navegador.");
+            console.error("Não foi possível abrir uma nova aba.");
         }
     } catch (err) {
         console.error('Erro ao tentar compartilhar a tela: ', err);

@@ -4,14 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Screen Share</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Screen Share</h1>
-        <button id="startShare">Start Sharing Screen</button>
-        <button id="stopShare" disabled>Stop Sharing Screen</button>
-    </div>
+    <button id="startShare">Start Sharing Screen</button>
+    <button id="stopShare" disabled>Stop Sharing Screen</button>
 
     <script src="script.js"></script>
 </body>
