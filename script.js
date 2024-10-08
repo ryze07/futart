@@ -10,8 +10,8 @@ startShareButton.addEventListener('click', async () => {
         
         // Abre uma nova aba
         newWindow = window.open("", "_blank", "width=800,height=600");
-        
-        // Cria o elemento de vídeo na nova aba
+
+        // Injeta HTML na nova aba
         newWindow.document.write(`
             <html>
             <head><title>Screen Sharing</title></head>
@@ -20,15 +20,14 @@ startShareButton.addEventListener('click', async () => {
             </body>
             </html>
         `);
-        
-        // Espera até que a nova aba esteja pronta
-        newWindow.document.close();
-        
-        // Injeta o stream de mídia no vídeo da nova aba
-        const videoElement = newWindow.document.getElementById('sharedVideo');
-        videoElement.srcObject = mediaStream;
-        
-        // Habilita e desabilita os botões corretamente
+
+        // Aguarda a nova aba carregar completamente
+        newWindow.onload = () => {
+            const videoElement = newWindow.document.getElementById('sharedVideo');
+            videoElement.srcObject = mediaStream;  // Injeta o stream de vídeo
+        };
+
+        // Atualiza os botões de controle
         startShareButton.disabled = true;
         stopShareButton.disabled = false;
     } catch (err) {
@@ -39,16 +38,16 @@ startShareButton.addEventListener('click', async () => {
 stopShareButton.addEventListener('click', () => {
     if (mediaStream) {
         let tracks = mediaStream.getTracks();
-        tracks.forEach(track => track.stop());
+        tracks.forEach(track => track.stop());  // Encerra o stream
         mediaStream = null;
 
-        // Fecha a nova aba
+        // Fecha a aba aberta
         if (newWindow) {
             newWindow.close();
             newWindow = null;
         }
-        
-        // Habilita e desabilita os botões corretamente
+
+        // Atualiza os botões de controle
         startShareButton.disabled = false;
         stopShareButton.disabled = true;
     }
